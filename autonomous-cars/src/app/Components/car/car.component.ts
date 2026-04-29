@@ -15,6 +15,7 @@ export class CarComponent implements OnInit, Car, Location {
   x!: number;
   y!: number;
   speed!: number;
+  encounteredEvents: string[] = [];
 
   constructor() {}
 
@@ -43,6 +44,11 @@ export class CarComponent implements OnInit, Car, Location {
     };
   }
 
+  randomEncounteredEvent(): string {
+    const events = ['Accident', 'Traffic', 'Road Work', 'Police'];
+    return events[Math.floor(Math.random() * events.length)];
+  }
+
   ngOnInit(): void {
     const car = this.randomCar();
     this.manufacturer = car.manufacturer;
@@ -52,5 +58,8 @@ export class CarComponent implements OnInit, Car, Location {
     this.y = car.y;
     this.speed = car.speed;
     console.log(car);
+    setInterval(() => {
+      this.encounteredEvents.push(this.randomEncounteredEvent());
+    }, 10000);
   }
 }
