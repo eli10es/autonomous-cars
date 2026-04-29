@@ -1,12 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { Car } from '../../Interfaces/car';
 import { Location } from '../../Interfaces/location';
+import { NetworkService } from '../../Services/network.service';
 
 @Component({
   selector: 'app-car',
   imports: [],
   templateUrl: './car.component.html',
   styleUrl: './car.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CarComponent implements OnInit, Car, Location {
   manufacturer!: string;
@@ -17,7 +24,10 @@ export class CarComponent implements OnInit, Car, Location {
   speed!: number;
   encounteredEvents: string[] = [];
 
-  constructor() {}
+  constructor(
+    private carNetworkService: NetworkService,
+    private changeDetector: ChangeDetectorRef,
+  ) {}
 
   randomCar(): {
     manufacturer: string;
@@ -57,9 +67,32 @@ export class CarComponent implements OnInit, Car, Location {
     this.x = car.x;
     this.y = car.y;
     this.speed = car.speed;
-    console.log(car);
+    this.carNetworkService.addCar({
+      manufacturer: this.manufacturer,
+      model: this.model,
+      ID: this.ID,
+      x: this.x,
+      y: this.y,
+      speed: this.speed,
+      encounteredEvents: this.encounteredEvents,
+    } as CarComponent);
     setInterval(() => {
       this.encounteredEvents.push(this.randomEncounteredEvent());
+      this.changeDetector.detectChanges();
     }, 10000);
+  }
+
+  getCars() {
+    const cars = this.carNetworkService.getCars();
+    return cars;
+  }
+
+  getClosestCar() {
+    const closestCar = this.carNetworkService.getClosestCar(this.x, this.y);
+    console.log(closestCar);
+  }
+
+  changeSpeed(newSpeed: string) {
+    this.speed = Number(newSpeed);
   }
 }

@@ -1,1 +1,23 @@
-<p>car works!</p>
+<div class="container">
+  <h2 class="header">{{ model }} (ID: {{ ID }})</h2>
+   
+  <button class="btn" (click)="getClosestCar()">Get Closest Car</button>
+  <div>
+    <input type="text" #newSpeed />
+    <button class="btn" (click)="changeSpeed(newSpeed.value)">
+      Change Speed
+    </button>
+  </div>
+
+  <select name="events">
+    @for (event of encounteredEvents; track event) {
+      <option value="">{{ event }}</option>
+    }
+  </select>
+  <select name="" id="">
+    @for (car of getCars(); track car) {
+      <option value="">{{ car.model }} {{ car.ID }}</option>
+    }
+  </select>
+  <button class="btn">Send Event</button>
+</div>
