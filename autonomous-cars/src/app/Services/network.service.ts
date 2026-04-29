@@ -7,6 +7,8 @@ import { CarComponent } from '../Components/car/car.component';
 export class NetworkService {
   constructor() {}
 
+  
+
   private cars: CarComponent[] = [];
 
   addCar(car: CarComponent) {

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   OnInit,
 } from '@angular/core';
 import { Car } from '../../Interfaces/car';

@@ -1,9 +1,29 @@
 <div class="container">
-  <h2 class="header">{{ model }} (ID: {{ ID }})</h2>
-   
-  <button class="btn" (click)="getClosestCar()">Get Closest Car</button>
   <div>
-    <input type="text" #newSpeed />
+    <h2 class="header">{{ model }} (ID: {{ ID }})</h2>
+    <div>
+      <div class="label">
+        <label for="">Model:</label>
+        <p>{{ model }}</p>
+      </div>
+      <div class="label">
+        <label for="">X:</label>
+        <p>{{ x }}</p>
+      </div>
+      <div class="label">
+        <label for="">Y:</label>
+        <p>{{ y }}</p>
+      </div>
+      <div class="label">
+        <label for="">Speed:</label>
+        <p>{{ speed }}</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" (click)="getClosestCar()">Get Closest Car</button>
+  <div class="speed-input">
+    <input type="text" id="newSpeed" #newSpeed />
     <button class="btn" (click)="changeSpeed(newSpeed.value)">
       Change Speed
     </button>
