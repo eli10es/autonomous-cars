@@ -29,15 +29,22 @@
     </button>
   </div>
 
-  <select name="events">
+  <select name="events" [formControl]="eventToSend">
     @for (event of encounteredEvents; track event) {
-      <option value="">{{ event }}</option>
+      <option [value]="event">{{ event }}</option>
     }
   </select>
-  <select name="" id="">
+  <select name="" id="" [formControl]="carToSend">
     @for (car of getCars(); track car) {
-      <option value="">{{ car.model }} {{ car.ID }}</option>
+      <option [value]="car.ID">{{ car.model }} {{ car.ID }}</option>
     }
   </select>
-  <button class="btn">Send Event</button>
+  <button class="btn" (click)="sendEvent()">Send Event</button>
+
+  @if (receivedEvents.length != 0) {
+    <h2 class="header">Received Events:</h2>
+    @for (event of receivedEvents; track event) {
+      <p class="label">From CarID:{{ event.from }} {{ event.event }}</p>
+    }
+  }
 </div>

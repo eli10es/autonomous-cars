@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CarComponent } from '../Components/car/car.component';
+import { BehaviorSubject } from 'rxjs';
+import { EncounteredEvent } from '../Interfaces/event';
 
 @Injectable({
   providedIn: 'root',
@@ -7,9 +9,19 @@ import { CarComponent } from '../Components/car/car.component';
 export class NetworkService {
   constructor() {}
 
-  
-
   private cars: CarComponent[] = [];
+
+  private eventsData = new BehaviorSubject<EncounteredEvent>({
+    event: '',
+    IDFrom: 0,
+    IDto: 0,
+  });
+
+  event$ = this.eventsData.asObservable();
+
+  sendData(event: EncounteredEvent) {
+    this.eventsData.next(event);
+  }
 
   addCar(car: CarComponent) {
     this.cars.push(car);

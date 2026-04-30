@@ -3,20 +3,23 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { Car } from '../../Interfaces/car';
 import { Location } from '../../Interfaces/location';
 import { NetworkService } from '../../Services/network.service';
+import { EncounteredEvent } from '../../Interfaces/event';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-car',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './car.component.html',
   styleUrl: './car.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CarComponent implements OnInit, Car, Location {
+export class CarComponent implements OnInit, Car, Location, OnDestroy {
   manufacturer!: string;
   model!: string;
   ID!: number;
@@ -24,6 +27,10 @@ export class CarComponent implements OnInit, Car, Location {
   y!: number;
   speed!: number;
   encounteredEvents: string[] = [];
+  receivedEvents: { from: number; event: string }[] = [];
+  eventToSend = new FormControl<string>('');
+  carToSend = new FormControl<string>('');
+  receivedEvent: any;
 
   constructor(
     private carNetworkService: NetworkService,
@@ -62,6 +69,7 @@ export class CarComponent implements OnInit, Car, Location {
 
   ngOnInit(): void {
     const car = this.randomCar();
+    this.encounteredEvents.push(this.randomEncounteredEvent());
     this.manufacturer = car.manufacturer;
     this.model = car.model;
     this.ID = car.ID;
@@ -78,9 +86,26 @@ export class CarComponent implements OnInit, Car, Location {
       encounteredEvents: this.encounteredEvents,
     } as CarComponent);
     setInterval(() => {
-      this.encounteredEvents.push(this.randomEncounteredEvent());
-      this.changeDetector.detectChanges();
+      const event = this.randomEncounteredEvent();
+      if (!this.encounteredEvents.includes(event)) {
+        this.encounteredEvents.push(event);
+        this.changeDetector.detectChanges();
+      }
     }, 10000);
+    this.receivedEvent = this.carNetworkService.event$.subscribe((data) => {
+      this.receiveData(data);
+    });
+  }
+
+  receiveData(data: EncounteredEvent) {
+    if (!data) {
+      return;
+    }
+
+    if (data.IDto === this.ID) {
+      this.receivedEvents.push({ from: data.IDFrom, event: data.event });
+      this.changeDetector.detectChanges();
+    }
   }
 
   getCars() {
@@ -95,5 +120,21 @@ export class CarComponent implements OnInit, Car, Location {
 
   changeSpeed(newSpeed: string) {
     this.speed = Number(newSpeed);
+  }
+
+  sendEvent() {
+    const event = this.eventToSend.value;
+    const carTo = this.carToSend.value;
+    const carFrom = this.ID;
+
+    this.carNetworkService.sendData({
+      event: event as string,
+      IDFrom: carFrom,
+      IDto: Number(carTo),
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.receivedEvent.unsubscribe();
   }
 }
