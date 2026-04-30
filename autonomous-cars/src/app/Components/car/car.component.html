@@ -21,7 +21,14 @@
     </div>
   </div>
 
-  <button class="btn" (click)="getClosestCar()">Get Closest Car</button>
+  @if (showClosestCar) {
+    <button class="btn" (click)="hideClosestCar()">Hide Closest Car</button>
+  } @else {
+    <button class="btn" (click)="getClosestCar()">Get Closest Car</button>
+  }
+  @if (showClosestCar) {
+    <h2 class="header">Closest Car:{{ getClosestCar() }}</h2>
+  }
   <div class="speed-input">
     <input type="text" id="newSpeed" #newSpeed />
     <button class="btn" (click)="changeSpeed(newSpeed.value)">
@@ -29,17 +36,25 @@
     </button>
   </div>
 
-  <select name="events" [formControl]="eventToSend">
-    @for (event of encounteredEvents; track event) {
-      <option [value]="event">{{ event }}</option>
-    }
-  </select>
-  <select name="" id="" [formControl]="carToSend">
-    @for (car of getCars(); track car) {
-      <option [value]="car.ID">{{ car.model }} {{ car.ID }}</option>
-    }
-  </select>
-  <button class="btn" (click)="sendEvent()">Send Event</button>
+  <div>
+    <div>
+      <label class="label" for="EventToSend">Event to Send:</label>
+      <select name="events" [formControl]="eventToSend">
+        @for (event of encounteredEvents; track event) {
+          <option [value]="event">{{ event }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label class="label" for="EventToSend">Car to Send To:</label>
+      <select name="" id="" [formControl]="carToSend">
+        @for (car of getCars(); track car) {
+          <option [value]="car.ID">{{ car.model }} {{ car.ID }}</option>
+        }
+      </select>
+    </div>
+    <button class="btn" (click)="sendEvent()">Send Event</button>
+  </div>
 
   @if (receivedEvents.length != 0) {
     <h2 class="header">Received Events:</h2>
@@ -47,4 +62,27 @@
       <p class="label">From CarID:{{ event.from }} {{ event.event }}</p>
     }
   }
+
+  <div>
+    <div>
+      <label class="label" for="EventToSend">Choose Car:</label>
+      <select name="" id="" #carID>
+        @for (car of getCars(); track car) {
+          <option [value]="car.ID">{{ car.model }} {{ car.ID }}</option>
+        }
+      </select>
+    </div>
+    @if (!showDistanceToAnotherCar) {
+      <button class="btn" (click)="calculateDistanceToOtherCar(carID.value)">
+        Calculate Distance
+      </button>
+    } @else {
+      <button class="btn" (click)="hideDistance()">Hide Distance</button>
+    }
+    @if (showDistanceToAnotherCar) {
+      <h2 class="header">
+        Distance:{{ calculateDistanceToOtherCar(carID.value).toFixed(2) }} km
+      </h2>
+    }
+  </div>
 </div>

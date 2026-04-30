@@ -31,6 +31,18 @@ export class NetworkService {
     return this.cars;
   }
 
+  getCarById(ID: number) {
+    for (const car of this.cars) {
+      if (car.ID === ID) return car;
+    }
+    return null;
+  }
+
+  calculateDistanceBetween2Cars(carId: number, x: number, y: number) {
+    const car = this.getCarById(carId);
+    return this.calculateDistance(car as CarComponent, x, y);
+  }
+
   getClosestCar(x: number, y: number): CarComponent | null {
     if (this.cars.length === 1) {
       return null;

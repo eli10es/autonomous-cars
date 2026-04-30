@@ -31,6 +31,8 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
   eventToSend = new FormControl<string>('');
   carToSend = new FormControl<string>('');
   receivedEvent: any;
+  showClosestCar: boolean = false;
+  showDistanceToAnotherCar: boolean = false;
 
   constructor(
     private carNetworkService: NetworkService,
@@ -115,7 +117,25 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
 
   getClosestCar() {
     const closestCar = this.carNetworkService.getClosestCar(this.x, this.y);
-    console.log(closestCar);
+    this.showClosestCar = true;
+    return `${closestCar?.model} ID:${closestCar?.ID}`;
+  }
+
+  hideClosestCar() {
+    this.showClosestCar = false;
+  }
+
+  calculateDistanceToOtherCar(ID: string) {
+    this.showDistanceToAnotherCar = true;
+    return this.carNetworkService.calculateDistanceBetween2Cars(
+      Number(ID),
+      this.x,
+      this.y,
+    );
+  }
+
+  hideDistance() {
+    this.showDistanceToAnotherCar = false;
   }
 
   changeSpeed(newSpeed: string) {
