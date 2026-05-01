@@ -94,6 +94,13 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
         this.changeDetector.detectChanges();
       }
     }, 10000);
+
+    setInterval(() => {
+      this.x++;
+      this.y++;
+      this.changeDetector.detectChanges();
+    }, 3000);
+
     this.receivedEvent = this.carNetworkService.event$.subscribe((data) => {
       this.receiveData(data);
     });
