@@ -41,7 +41,7 @@
       <label class="label" for="EventToSend">Event to Send:</label>
       <select name="events" [formControl]="eventToSend">
         @for (event of encounteredEvents; track event) {
-          <option [value]="event">{{ event }}</option>
+          <option [value]="event.event">{{ event.event }}</option>
         }
       </select>
     </div>

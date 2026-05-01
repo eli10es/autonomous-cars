@@ -15,6 +15,7 @@ export class NetworkService {
     event: '',
     IDFrom: 0,
     IDto: 0,
+    km: 0,
   });
 
   event$ = this.eventsData.asObservable();

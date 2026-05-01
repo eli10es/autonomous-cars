@@ -26,7 +26,7 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
   x!: number;
   y!: number;
   speed!: number;
-  encounteredEvents: string[] = [];
+  encounteredEvents: { event: string; km: number }[] = [];
   receivedEvents: { from: number; event: string }[] = [];
   eventToSend = new FormControl<string>('');
   carToSend = new FormControl<string>('');
@@ -64,9 +64,12 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
     };
   }
 
-  randomEncounteredEvent(): string {
+  randomEncounteredEvent(): { event: string; km: number } {
     const events = ['Accident', 'Traffic', 'Road Work', 'Police'];
-    return events[Math.floor(Math.random() * events.length)];
+    return {
+      event: events[Math.floor(Math.random() * events.length)],
+      km: this.x,
+    };
   }
 
   ngOnInit(): void {
@@ -89,7 +92,10 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
     } as CarComponent);
     setInterval(() => {
       const event = this.randomEncounteredEvent();
-      if (!this.encounteredEvents.includes(event)) {
+      const isEventInArray = this.encounteredEvents.findIndex(
+        (encounter) => encounter.event === event.event,
+      );
+      if (isEventInArray == -1) {
         this.encounteredEvents.push(event);
         this.changeDetector.detectChanges();
       }
@@ -100,6 +106,15 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
       this.y++;
       this.changeDetector.detectChanges();
     }, 3000);
+
+    setInterval(() => {
+      for (let i = 0; i < this.encounteredEvents.length; i++) {
+        if (this.x - this.encounteredEvents[i].km > 100) {
+          this.encounteredEvents.splice(i, 1);
+          this.changeDetector.detectChanges();
+        }
+      }
+    }, 30000);
 
     this.receivedEvent = this.carNetworkService.event$.subscribe((data) => {
       this.receiveData(data);
@@ -153,11 +168,15 @@ export class CarComponent implements OnInit, Car, Location, OnDestroy {
     const event = this.eventToSend.value;
     const carTo = this.carToSend.value;
     const carFrom = this.ID;
+    const encounter = this.encounteredEvents.find(
+      (encounter) => encounter.event === event,
+    ) || { event: 'Nothing', km: 0 };
 
     this.carNetworkService.sendData({
       event: event as string,
       IDFrom: carFrom,
       IDto: Number(carTo),
+      km: encounter.km,
     });
   }
 
